@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Encuestas</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_delete">Borrar encuestas</string>
+    <string name="action_logout">Salir</string>
+    <string name="new_poll">Nueva encuesta</string>
+    <string name="polls_list">Listado de encuestas</string>
+    <string name="firstname">Nombre</string>
+    <string name="lastname">Apellido</string>
+    <string name="email">Correo electrónico del encuestador</string>
+    <string name="age">Edad</string>
+    <string name="travel">¿Cómo estuvo el viaje?</string>
+    <string name="save_poll">Guardar encuesta</string>
+
+    <!-- Api domain -->
+    <string name="api_domain">http://ceouniandes.eastus.cloudapp.azure.com</string>
+
+    <string name="preferences">preferences</string>
+    <string name="update">update</string>
+
+    <string-array name="answer1">
+        <item>¿Motivo de viaje?</item>
+        <item>Turismo</item>
+        <item>Trabajo</item>
+        <item>Estudio</item>
+    </string-array>
+
+    <string-array name="answer2">
+        <item>¿Es la primera vez que viaja a esta región?</item>
+        <item>Sí</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="answer3">
+        <item>¿Qué le gusta más de esta región?</item>
+        <item>Los paisajes</item>
+        <item>La comida</item>
+        <item>La gente</item>
+        <item>Las celebraciones</item>
+    </string-array>
+</resources>
