@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 
 import com.rafaelbermudez.encuestas.Utilities.Utilities;
-
 public class SQLiteHelperConnection extends SQLiteOpenHelper {
+
 
     public SQLiteHelperConnection(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);

@@ -131,12 +131,13 @@ public class SendingService extends Service {
                         }
                     } else {
                         Log.i("NETWORK123","Connected");
-//                        /showNotifications("APP" , "It is working");
-                        // Perform your actions here
+
                         ConnectionHelper.isOnline = true;
 
                         sharedPref = context.getSharedPreferences(
                                 getString(R.string.preferences), Context.MODE_PRIVATE);
+
+                        editor = sharedPref.edit();
 
                         update = sharedPref.getBoolean(getString(R.string.update),true);
                         mEmail = sharedPref.getString(getString(R.string.email),"DEFAULT");
@@ -144,6 +145,8 @@ public class SendingService extends Service {
                         if (!flag){
                             getPollList();
                         }
+
+                        //Toast.makeText(context, update.toString(), Toast.LENGTH_LONG).show();
 
                         if (update){
                             if (mPollsList.size() > 0){
@@ -187,7 +190,9 @@ public class SendingService extends Service {
             try {
                 return uploadPollsRequest(params[0]);
             } catch (IOException e) {
-                flag = false;
+                //flag = false;
+                editor.putBoolean(getString(R.string.update), true);
+                editor.apply();
                 return "Error al conectar al servidor.";
             }
         }
@@ -200,7 +205,6 @@ public class SendingService extends Service {
                 String status = jsonObject.optString("status");
 
                 if ("success".equals(status)){
-                    editor = sharedPref.edit();
                     editor.putBoolean(getString(R.string.update), false);
                     editor.apply();
 
@@ -210,6 +214,10 @@ public class SendingService extends Service {
                     intent.setAction("com.rafaelbermudez.encuestas");
                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
                 }
+                else{
+                    editor.putBoolean(getString(R.string.update), true);
+                    editor.apply();
+                }
 
                 //Toast.makeText(MainActivity.this, status , Toast.LENGTH_LONG).show();
                 Log.d("request status", status);
@@ -217,6 +225,8 @@ public class SendingService extends Service {
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                editor.putBoolean(getString(R.string.update), true);
+                editor.apply();
                 //Toast.makeText(MainActivity.this, "Se presentó un error: "+e.toString(), Toast.LENGTH_SHORT).show();
 
             }
@@ -234,8 +244,8 @@ public class SendingService extends Service {
         try {
             URL url = new URL(myurl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setReadTimeout(50000 /* milliseconds */);
+            conn.setConnectTimeout(65000 /* milliseconds */);
 
 
             /* Para hacer post sería con esto si es con get ignorar esas líneas (ojop que conn.setRequestMethod("GET") cambiaría por POST)*/

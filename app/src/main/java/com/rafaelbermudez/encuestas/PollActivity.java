@@ -1,5 +1,6 @@
 package com.rafaelbermudez.encuestas;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -55,11 +56,17 @@ public class PollActivity extends AppCompatActivity {
 
     private String mEmail;
 
+    private ProgressDialog progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
         setTitle(R.string.new_poll);
+
+        progress = new ProgressDialog(this);
+        progress.setCancelable(false);
+        progress.setMessage("Subiendo encuesta...");
 
         mFirstname = findViewById(R.id.poll_firstname);
         mLastname = findViewById(R.id.poll_lastname);
@@ -134,7 +141,7 @@ public class PollActivity extends AppCompatActivity {
         mEmail = sharedPref.getString(getString(R.string.email),"DEFAULT");
 
         if (ConnectionHelper.isConnectedOrConnecting(this)){
-            new UploadPolls().execute(getString(R.string.api_domain)+"/mobile/uploadpolls");
+            new UploadPolls(progress).execute(getString(R.string.api_domain)+"/mobile/uploadpolls");
         }
         else{
             editor.putBoolean(getString(R.string.update), true);
@@ -149,12 +156,15 @@ public class PollActivity extends AppCompatActivity {
 
     private class UploadPolls extends AsyncTask<String, Void, String> {
 
+        ProgressDialog progress;
+
         public void onPreExecute() {
+            progress.show();
             getPollList();
         }
 
-        public UploadPolls() {
-
+        public UploadPolls(ProgressDialog progress) {
+            this.progress = progress;
         }
 
         @Override
@@ -164,6 +174,8 @@ public class PollActivity extends AppCompatActivity {
             try {
                 return uploadPollsRequest(params[0]);
             } catch (IOException e) {
+                editor.putBoolean(getString(R.string.update), true);
+                editor.apply();
                 return "Error al conectar al servidor.";
             }
         }
@@ -196,11 +208,15 @@ public class PollActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                editor.putBoolean(getString(R.string.update), true);
+                editor.apply();
+                Toast.makeText(PollActivity.this, "Las encuestas se subirán cuando haya conexión a internet", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(MainActivity.this, "Se presentó un error: "+e.toString(), Toast.LENGTH_SHORT).show();
 
             }
 
             finish();
+            progress.hide();
         }
     }
 
@@ -213,8 +229,8 @@ public class PollActivity extends AppCompatActivity {
         try {
             URL url = new URL(myurl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setReadTimeout(50000 /* milliseconds */);
+            conn.setConnectTimeout(65000 /* milliseconds */);
 
 
             /* Para hacer post sería con esto si es con get ignorar esas líneas (ojop que conn.setRequestMethod("GET") cambiaría por POST)*/
